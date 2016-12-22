@@ -43,41 +43,196 @@ window.countNRooksSolutions = function(n) {
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
-window.findNQueensSolution = function(n) {
-  var board, solution;
 
-  var generateEmptyBoard = function() {
+//-------------------------------------------------------------------------------------
+// THIS WAS OUR FIRST IDEA:
+//-------------------------------------------------------------------------------------
+// It generates random boards and checks them over and over until 
+// we arrive at a possible solution with no conflicts
+
+// window.findNQueensSolution = function(n) {
+//   var board, solution;
+
+//   var generateEmptyBoard = function() {
+//     var emptyBoard = [];
+//     for (var i = 0; i < n; i++) {
+//       row = new Array(n).fill(0);
+//       emptyBoard.push(row);
+//     }
+//     return emptyBoard;
+//   };
+
+//   var generateBoard = function() {
+//     var solution = generateEmptyBoard();
+    
+//     for (var i = 0; i < n; i++) {
+//       newRow = new Array(n).fill(0);
+//       newRow[Math.floor(Math.random() * n)] = 1;
+//       solution[i] = newRow;
+//       board = new Board(solution);
+//       var hasConflict = board.hasAnyQueensConflicts();
+      
+//       if (hasConflict) {
+//         solution = generateEmptyBoard();
+//         i = -1;           
+//       }
+    
+//     }
+//     return solution;
+//   };
+  
+//   solution = generateBoard();
+//   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+//   return solution;
+// };
+//-------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------
+// SECOND IDEA WRITTEN DURING LUNCH:
+//-------------------------------------------------------------------------------------
+// It iterates through a pre-made board with a queen starting at position
+// [0][1].  At each position of the board, a 0 is toggled to a 1, a check
+// for conflicts runs, and if found the 1 is toggled back to a 0.  We run
+// through the entire board doing this until we arrive at a solution.
+//
+// This idea works for n = 4, n = 5, but cannot find a solution at n = 6.
+//
+// Conclusion: 
+// -----------
+// The second queen placed without conflict is the last attempt we ever make
+// at placing that queen.  If we don't arrive at a solution with that
+// for the second queen, its game over.  We need a recursive function here to
+// take us back to the second queen if/when that position doesn't work out 
+// downstream so that we can start over placing the second queen at a position
+// directly to the right of the attempted position.
+
+// window.findNQueensSolution = function(n) {
+
+//   var generateStarterBoard = function() {
+//     var emptyBoard = [];
+//     var starterBoard;
+
+//     for (var i = 0; i < n; i++) {
+//       row = new Array(n).fill(0);
+//       emptyBoard.push(row);
+//     }
+//     starterBoard = emptyBoard;
+//     starterBoard[0][1] = 1; 
+//     return starterBoard;
+//   };
+
+//   var board = new Board(generateStarterBoard());
+//   var solution = [];
+    
+//   for (var i = 0; i < n; i++) {
+//     var j = (i === 0) ? 2 : 0;
+//     for (j; j < n; j++) {
+//       board.togglePiece(i, j);
+//       if (board.hasAnyQueensConflicts()) {
+//         board.togglePiece(i, j);
+//       }      
+//     }
+//   }
+
+//   console.log(board);
+
+//   for (var k = 0; k < n; k++) {
+//     solution.push(board.attributes[k]);
+//   }
+  
+//   return solution;
+
+// };
+
+//-------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------
+// THIRD IDEA WRITTEN DURING LUNCH:
+//-------------------------------------------------------------------------------------
+// The idea here is to implement a recursive function as described
+// in Anthony's Second Idea Conclusion and inject it into that code
+// to solve the second queen problem.
+//
+// Conclusion: 
+// -----------
+// We'll see what happens after I try it!
+
+window.findNQueensSolution = function(n) {
+  
+  var generateStarterBoard = function() {
     var emptyBoard = [];
+    var starterBoard;
+
     for (var i = 0; i < n; i++) {
       row = new Array(n).fill(0);
       emptyBoard.push(row);
     }
-    return emptyBoard;
+    starterBoard = emptyBoard;
+    starterBoard[0][1] = 1; 
+    return starterBoard;
   };
 
-  var generateBoard = function() {
-    var solution = generateEmptyBoard();
-    
-    for (var i = 0; i < n; i++) {
-      newRow = new Array(n).fill(0);
-      newRow[Math.floor(Math.random() * n)] = 1;
-      solution[i] = newRow;
-      board = new Board(solution);
-      var hasConflict = board.hasAnyQueensConflicts();
-      
-      if (hasConflict) {
-        solution = generateEmptyBoard();
-        i = -1;           
+  // ----------------
+  var board = new Board(generateStarterBoard());
+  var solution = [];
+  // ----------------    
+
+  var recursiveFunction = function(inputBoard, startPosition) {
+    for (j; j < n; j++) {
+      board.togglePiece(i, j);
+      if (board.hasAnyQueensConflicts()) {
+        board.togglePiece(i, j);
       }
-    
+
     }
-    return solution;
+    return board;
   };
+
+  // ----------------
+  for (var i = 0; i < n; i++) {
+    var j = (i === 0) ? 2 : 0;
+    board = recursiveFunction(board, j);
+  }
+  // ----------------
+
   
-  solution = generateBoard();
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  console.log(board);
+  for (var k = 0; k < n; k++) {
+    solution.push(board.attributes[k]);
+  }
   return solution;
+
 };
+
+// var recursiveFunction = function(inputBoard, startPosition) {
+//     for (j; j < n; j++) {
+//       board.togglePiece(i, j);
+//       if (board.hasAnyQueensConflicts()) {
+//         board.togglePiece(i, j);
+//         recursiveFunction(board, j + 1);
+//         return;
+//       }
+//     }
+//     return board;
+//   };
+  
+
+
+//   for (var i = 0; i < n; i++) {
+//     var j = (i === 0) ? 2 : 0;
+//     recursiveFunction(board, j);
+//   }
+
+//   var j = (i === 0) ? 2 : 0;
+
+//   return solution;
+// };
+//-------------------------------------------------------------------------------------
+
+
+
+
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
