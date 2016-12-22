@@ -44,26 +44,37 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var board;
-  var solution = [];
+  var board, solution;
 
-  var generateBoard = function() {
+  var generateEmptyBoard = function() {
+    var emptyBoard = [];
     for (var i = 0; i < n; i++) {
       row = new Array(n).fill(0);
-      row[Math.floor(Math.random() * n)] = 1;
-      solution.push(row);
+      emptyBoard.push(row);
     }
-    board = new Board(solution);
+    return emptyBoard;
   };
 
-  generateBoard();
-  console.log(board.rows());
-  console.log(solution);
-  while (board.hasAnyQueensConflicts()) {
-    solution = [];
-    generateBoard();
-    // findNQueensSolution(n);
-  }
+  var generateBoard = function() {
+    var solution = generateEmptyBoard();
+    
+    for (var i = 0; i < n; i++) {
+      newRow = new Array(n).fill(0);
+      newRow[Math.floor(Math.random() * n)] = 1;
+      solution[i] = newRow;
+      board = new Board(solution);
+      var hasConflict = board.hasAnyQueensConflicts();
+      
+      if (hasConflict) {
+        solution = generateEmptyBoard();
+        i = -1;           
+      }
+    
+    }
+    return solution;
+  };
+  
+  solution = generateBoard();
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
 };
