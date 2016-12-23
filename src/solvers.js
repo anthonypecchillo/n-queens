@@ -158,53 +158,56 @@ window.countNRooksSolutions = function(n) {
 // -----------
 // We'll see what happens after I try it!
 
-window.findNQueensSolution = function(n) {
+// window.findNQueensSolution = function(n) {
   
-  var generateStarterBoard = function() {
-    var emptyBoard = [];
-    var starterBoard;
+//   var generateStarterBoard = function() {
+//     var emptyBoard = [];
+//     var starterBoard;
 
-    for (var i = 0; i < n; i++) {
-      row = new Array(n).fill(0);
-      emptyBoard.push(row);
-    }
-    starterBoard = emptyBoard;
-    starterBoard[0][1] = 1; 
-    return starterBoard;
-  };
+//     for (var i = 0; i < n; i++) {
+//       row = new Array(n).fill(0);
+//       emptyBoard.push(row);
+//     }
+//     starterBoard = emptyBoard;
+//     starterBoard[0][1] = 1; 
+//     return starterBoard;
+//   };
 
-  // ----------------
-  var board = new Board(generateStarterBoard());
-  var solution = [];
-  // ----------------    
+//   // ----------------
+//   var board = new Board(generateStarterBoard());
+//   var solution = [];
+//   // ----------------    
 
-  var recursiveFunction = function(inputBoard, startPosition) {
-    for (j; j < n; j++) {
-      board.togglePiece(i, j);
-      if (board.hasAnyQueensConflicts()) {
-        board.togglePiece(i, j);
-      }
+//   var recursiveFunction = function(inputBoard, startPosition) {
+//     debugger;
+//     for (j; j < n; j++) {
+//       board.togglePiece(i, j);
+//       if (board.hasAnyQueensConflicts()) {
+//         board.togglePiece(i, j);
+//         recursiveFunction(board, j + 1);
+//       }
 
-    }
-    return board;
-  };
+//     }
+//     return board;
+//   };
 
-  // ----------------
-  for (var i = 0; i < n; i++) {
-    var j = (i === 0) ? 2 : 0;
-    board = recursiveFunction(board, j);
-  }
-  // ----------------
+//   // ----------------
+
+//   for (var i = 0; i < n; i++) {
+//     var j = (i === 0) ? 2 : 0;
+//     board = recursiveFunction(board, j);
+//   }
+//   // ----------------
 
   
-  console.log(board);
-  for (var k = 0; k < n; k++) {
-    solution.push(board.attributes[k]);
-  }
-  return solution;
+//   console.log(board);
+//   for (var k = 0; k < n; k++) {
+//     solution.push(board.attributes[k]);
+//   }
+//   return solution;
 
-};
-
+// };
+// --------------------------------------------------------------------------------
 // var recursiveFunction = function(inputBoard, startPosition) {
 //     for (j; j < n; j++) {
 //       board.togglePiece(i, j);
@@ -233,11 +236,98 @@ window.findNQueensSolution = function(n) {
 
 
 
+window.findNQueensSolution = function(n) {
+  if (n === 0 || n === 2 || n === 3) {
+    return [];
+  } else if (n === 1) {
+    return [1];
+  } else {
+    var boardObject, solutions;
+    var results = [];
+    var moveBank = window.findNRooksSolution(n);
+    var generateBoards = function(rowsToGo, result) {
+      if (!rowsToGo) {
+        results.push(result);
+        return;
+      } else {
+        moveBank.forEach(function(move) {
+          generateBoards(rowsToGo - 1, result.concat([move]));
+        });
+      }
+    };
+    if (n > 3) {
+      generateBoards(n, []);
+    }
+    solutions = results.filter(function(board) {
+      boardObject = new Board(board);
+      return !boardObject.hasAnyQueensConflicts();
+    });
+    var solution = solutions[0];
+    console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+    return solution;
+  }
+};
 
+// -----------------------------------------------------------------------------------------
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
-
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  if (n === 2 || n === 3) {
+    return 0;
+  } else if (n === 0 || n === 1) {
+    return 1;
+  } else {
+    var boardObject, solutions, solutionCount;
+    var results = [];
+    var moveBank = window.findNRooksSolution(n);
+    var generateBoards = function(rowsToGo, result) {
+      if (!rowsToGo) {
+        results.push(result);
+        return;
+      } else {
+        moveBank.forEach(function(move) {
+          generateBoards(rowsToGo - 1, result.concat([move]));
+        });
+      }
+    };
+    if (n > 3) {
+      generateBoards(n, []);
+    }
+    solutions = results.filter(function(board) {
+      boardObject = new Board(board);
+      return !boardObject.hasAnyQueensConflicts();
+    });
+    solutionCount = solutions.length;
+    console.log(JSON.stringify(solutions));
+    console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+    return solutionCount;
+  }
 };
+
+
+// [0,1,0,0],
+// [0,0,0,1],
+// [1,0,0,0],
+// [0,0,1,0]
+
+// [0,1,0,0],
+// [0,0,0,1],
+// [0,0,1,0],
+// [1,0,0,0]]
+
+// [0,0,1,0],
+// [1,0,0,0],
+// [0,0,0,1],
+// [0,1,0,0]]
+
+// [0,0,0,1],
+// [1,0,0,0],
+// [0,0,1,0],
+// [0,1,0,0]
+
+
+
+
+
+
+
+
