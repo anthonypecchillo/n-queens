@@ -91,7 +91,7 @@
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
       var rowConflict;
-      var length = this.get(0).length;
+      var length = this.get('n');
       for (var i = 0; i < length; i++) {
         rowConflict = this.hasRowConflictAt(i);
         if (rowConflict) {
@@ -181,7 +181,7 @@
       var diagBelow = [];
       for (var i = 0; i < diagLength; i++) {
         diagAbove.push(matrix[i][diagLength - (1 + i)]);
-        diagBelow.push(matrix[i + minorDiagonalColumnIndexAtFirstRow][diagLength + 1 - i]);
+        diagBelow.push(matrix[i + minorDiagonalColumnIndexAtFirstRow][diagLength - i]);
       }
       var diagAboveSum = diagAbove.reduce((sum, curr) => sum + curr);
       var diagBelowSum = diagBelow.reduce((sum, curr) => sum + curr);

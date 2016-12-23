@@ -237,10 +237,14 @@ window.countNRooksSolutions = function(n) {
 
 
 window.findNQueensSolution = function(n) {
-  if (n === 0 || n === 2 || n === 3) {
+  if (n === 0) {
     return [];
+  } else if (n === 2) {
+    return [[], []];
+  } else if ( n === 3) {
+    return [[], [], []];
   } else if (n === 1) {
-    return [1];
+    return [[1]];
   } else {
     var boardObject, solutions;
     var results = [];
@@ -251,7 +255,9 @@ window.findNQueensSolution = function(n) {
         return;
       } else {
         moveBank.forEach(function(move) {
-          generateBoards(rowsToGo - 1, result.concat([move]));
+          if (result.indexOf(move) < 0) {
+            generateBoards(rowsToGo - 1, result.concat([move]));
+          }
         });
       }
     };
@@ -262,6 +268,7 @@ window.findNQueensSolution = function(n) {
       boardObject = new Board(board);
       return !boardObject.hasAnyQueensConflicts();
     });
+    console.log('LOOK HERE:', solutions[0]);
     var solution = solutions[0];
     console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
     return solution;
@@ -285,7 +292,9 @@ window.countNQueensSolutions = function(n) {
         return;
       } else {
         moveBank.forEach(function(move) {
-          generateBoards(rowsToGo - 1, result.concat([move]));
+          if (result.indexOf(move) < 0) {
+            generateBoards(rowsToGo - 1, result.concat([move]));
+          }
         });
       }
     };
@@ -304,25 +313,14 @@ window.countNQueensSolutions = function(n) {
 };
 
 
-// [0,1,0,0],
-// [0,0,0,1],
-// [1,0,0,0],
-// [0,0,1,0]
-
-// [0,1,0,0],
-// [0,0,0,1],
-// [0,0,1,0],
-// [1,0,0,0]]
-
-// [0,0,1,0],
-// [1,0,0,0],
-// [0,0,0,1],
-// [0,1,0,0]]
-
-// [0,0,0,1],
-// [1,0,0,0],
-// [0,0,1,0],
-// [0,1,0,0]
+// [1,0,0,0,0,0,0,0],
+// [0,0,1,0,0,0,0,0],
+// [0,0,0,0,0,0,1,0],
+// [0,0,0,0,0,1,0,0],
+// [0,0,0,0,0,0,0,1],
+// [0,0,0,1,0,0,0,0],
+// [0,1,0,0,0,0,0,0],
+// [0,0,0,0,1,0,0,0]]
 
 
 
